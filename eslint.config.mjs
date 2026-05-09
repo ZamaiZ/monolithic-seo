@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Astro / monorepo generated output
+    "packages/**/.astro/**",
+    "packages/**/dist/**",
+    "generated/**",
   ]),
 ]);
 

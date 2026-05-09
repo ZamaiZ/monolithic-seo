@@ -1,5 +1,45 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Monolith SEO (stack)
+
+Este repositório é um **pnpm workspace**:
+
+| Parte | Pasta | Descrição |
+|--------|--------|-----------|
+| **Admin / painel** | raiz (`app/`) | Next.js 16 — UI e proxies HTTP |
+| **Template Astro** | `packages/astro-base` | Landing estática (Hero, Serviços, Contato) + `src/data/site.json` |
+| **API Python** | `services/python-api` | FastAPI — análise (`/analyze-url`), geração (`/generate-site`), ZIP (`/download-zip`) e preview (`/preview/...`) |
+| **Saída gerada** | `generated/` (gitignored) | Cópias por domínio + `dist/` após `astro build` |
+
+### Variáveis de ambiente (Next)
+
+Copie [`.env.example`](.env.example) para `.env.local` e ajuste se necessário:
+
+- `PYTHON_API_URL` — URL do FastAPI para o **servidor** Next fazer proxy (padrão `http://127.0.0.1:8000`)
+- `NEXT_PUBLIC_PYTHON_API_URL` — mesma URL (ou URL pública) para o **browser** — iframe de preview na home
+
+### Fluxo na UI (`/`)
+
+1. Inserir URL e **Analisar site** (IA + scrape).
+2. Rever ou editar dados e **Gerar site** (build Astro no Python).
+3. **Baixar ZIP** e/ou ver o **preview** (iframe aponta para o API Python).
+
+Rotas de proxy no Next:
+
+- `POST /api/analyze` → Python `/analyze-url`
+- `POST /api/generate` → Python `/generate-site`
+- `GET /api/download?domain=` → Python `/download-zip` (ZIP binário)
+
+Detalhes do backend: [`services/python-api/README.md`](services/python-api/README.md).
+
+### Comandos úteis
+
+```bash
+pnpm install
+pnpm dev
+pnpm --filter @monolith-seo/astro-base build
+```
+
 ## Getting Started
 
 First, run the development server:
